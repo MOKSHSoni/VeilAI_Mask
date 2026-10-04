@@ -4,7 +4,7 @@ The **real, working** version of the VeilAI prototype: a local AI privacy firewa
 
 **What "model" means here.** `veilai_mask` is a custom **Ollama model** created from Qwen3 4B Instruct (`./Modelfile`): the same weights packaged with VeilAI_Mask's instructions and deterministic settings. No new weights were trained; that would need a GPU and labelled training data. The protection comes from the whole engine: six detection layers, fusion, minimisation, masking and verification, with Qwen as one layer among them.
 
-The VeilAI prototype (`../../VeilAI`) is unchanged. VeilAI_Mask ports its deterministic code (rules, masking, verification, rehydration) to Python and replaces every simulated part with real models.
+The [VeilAI prototype](https://github.com/MOKSHSoni/VeilAI) ([live demo](https://veil-ai-blush.vercel.app/), simulated results) is unchanged. VeilAI_Mask ports its deterministic code (rules, masking, verification, rehydration) to Python and replaces every simulated part with real models.
 
 ---
 
@@ -93,7 +93,7 @@ Policy, thresholds and the necessity matrix are in `veilai_mask/config.py`.
 
 ## Benchmark (complete system)
 
-The whole engine, end to end, on the same 192-document benchmark and scoring as the original LLM-only test (`eval/run_benchmark.py`, results in `eval/summary.json`). Each document is scanned as pasted content; Intel Core Ultra 5 125H, 16 GB RAM, CPU only.
+The whole engine, end to end, on the same 192-document benchmark and scoring as the original LLM-only test (`eval/run_benchmark.py`, results in `eval/summary.json`; the benchmark documents themselves are not included in this repository). Each document is scanned as pasted content; Intel Core Ultra 5 125H, 16 GB RAM, CPU only.
 
 | | Qwen3 4B alone (original benchmark) | **VeilAI_Mask (complete system)** |
 |---|---:|---:|
@@ -112,7 +112,7 @@ By group (sensitive documents caught): business 100%, customer 100%, financial 1
 
 **The one false flag** is a code quickstart with `API_KEY="<your-key>"`: a template placeholder that the password rule treats as a secret.
 
-The earlier ablation (each layer added separately, in `../privacy-benchmark/ablation/`) measured 95.2% recall and 11.1% hard-flag FPR with the same fusion rule. This complete system trades a little recall for far fewer false alarms, mainly because L2 now ignores department names and descriptions, and the bulk-identifier rule is in place.
+The earlier ablation (each layer added separately, not included in this repository) measured 95.2% recall and 11.1% hard-flag FPR with the same fusion rule. This complete system trades a little recall for far fewer false alarms, mainly because L2 now ignores department names and descriptions, and the bulk-identifier rule is in place.
 
 ## Limitations
 
