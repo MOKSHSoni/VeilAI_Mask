@@ -1,0 +1,16 @@
+# Core engine + API (required)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+requests>=2.31
+datasketch>=1.6
+
+# L2 entity NER (recommended: without it, person names are not detected or masked)
+#   torch: install the CPU build first:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+presidio-analyzer[gliner]>=2.2
+gliner>=0.2
+#   then: python -m spacy download en_core_web_sm
+
+# Tests
+pytest>=8
+httpx>=0.27

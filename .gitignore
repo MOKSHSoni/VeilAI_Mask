@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime data: org secret, honeytoken registry, L5 cache (recreated on first run)
+data/
+
+# Logs
+*.log

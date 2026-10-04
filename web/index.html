@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="/favicon.svg" />
+<title>VeilAI_Mask</title>
+<style>
+  :root {
+    --bg: #f3f2ed; --panel: #fbfaf7; --panel2: #f0efe9; --sunken: #e9e7e0; --ink: #15161b; --ink2: #4a4c56; --ink3: #85868f;
+    --line: #e1dfd6; --line2: #cfccc1; --accent: #2b45ff; --accent-soft: #e6e9ff;
+    --safe: #16874a; --low: #0b857a; --medium: #b27700; --high: #d9480f; --critical: #d42a1f; --review: #6d4ce6;
+    --mono: ui-monospace, 'Cascadia Mono', Consolas, monospace; --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0c0d10; --panel: #131419; --panel2: #191b21; --sunken: #0f1014; --ink: #ecebe5; --ink2: #a8aab3; --ink3: #6b6e79;
+      --line: #23252c; --line2: #30333c; --accent: #6e82ff; --accent-soft: #1b2150; --safe: #3ccf7e; --low: #2bc4b4; --medium: #f0b429;
+      --high: #ff7a3d; --critical: #ff5a4e; --review: #a38bff; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--sans); }
+  header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; }
+  .logo { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); display: grid; place-items: center; color: var(--accent); font: 700 14px var(--mono); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+  .chip { font: 11px var(--mono); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line2); color: var(--ink2); }
+  .chip.ok { border-color: color-mix(in oklab, var(--safe) 50%, transparent); color: var(--safe); }
+  .chip.bad { border-color: color-mix(in oklab, var(--critical) 50%, transparent); color: var(--critical); }
+  main { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 14px; padding: 14px; max-width: 1500px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  .ph { padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .kicker { font: 10.5px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); }
+  .pb { padding: 12px 14px; }
+  label { display: block; margin: 10px 0 4px; }
+  textarea, input, select { width: 100%; font: 13px var(--sans); color: var(--ink); background: var(--panel); border: 1px solid var(--line2); border-radius: 8px; padding: 8px 10px; }
+  textarea { min-height: 220px; font-family: var(--mono); font-size: 12px; resize: vertical; }
+  textarea:focus, input:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row > * { flex: 1; }
+  button { font: 600 13px var(--sans); border-radius: 8px; padding: 8px 14px; border: 1px solid var(--line2); background: var(--panel); color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: transparent; color: #fff; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .samples { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .samples button { font: 11.5px var(--sans); padding: 4px 9px; }
+  .badge { flex: 0 0 auto !important; font: 700 12px var(--mono); letter-spacing: .06em; padding: 3px 10px; border-radius: 6px; border: 1px solid; }
+  .stack { display: grid; gap: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; font: 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); font-weight: 400; padding: 6px 8px; }
+  td { border-top: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+  .mono { font-family: var(--mono); font-size: 12px; }
+  .pre { white-space: pre-wrap; word-break: break-word; font: 12px/1.65 var(--mono); background: var(--sunken); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; max-height: 340px; overflow: auto; }
+  .ph-chip { font: 11px var(--mono); padding: 0 5px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent); }
+  .restored { background: color-mix(in oklab, var(--safe) 15%, transparent); border-bottom: 2px solid color-mix(in oklab, var(--safe) 60%, transparent); border-radius: 3px; padding: 0 2px; }
+  .status { font: 600 10.5px var(--mono); letter-spacing: .06em; padding: 1px 6px; border-radius: 4px; }
+  .muted { color: var(--ink3); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--panel); }
+  .empty { padding: 50px 20px; text-align: center; color: var(--ink3); }
+  .scroll { overflow-x: auto; }
+  .spinner { width: 14px; height: 14px; border: 2px solid var(--line2); border-top-color: var(--accent); border-radius: 50%; display: inline-block; animation: spin .8s linear infinite; vertical-align: -2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">V</div>VeilAI_Mask <span class="muted" style="font-weight:400">· local AI privacy firewall</span></div>
+  <div class="chips" id="health"><span class="chip">checking engine…</span></div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="ph"><span class="kicker">Prompt · stays on this device</span></div>
+    <div class="pb">
+      <label for="instruction" class="kicker">Instruction</label>
+      <input id="instruction" placeholder="e.g. Summarise this for my manager" />
+      <label for="content" class="kicker">Pasted content (optional)</label>
+      <textarea id="content" placeholder="Paste text, code, a CSV table…"></textarea>
+      <div class="row" style="margin-top:10px">
+        <div><label for="dest" class="kicker" style="margin-top:0">Destination</label>
+          <select id="dest"><option value="free_tier_ai">Free-tier AI</option><option value="enterprise_ai">Enterprise AI</option><option value="unknown_ai">Unknown / personal</option></select></div>
+        <div><label for="l5" class="kicker" style="margin-top:0">Qwen layer (L5)</label>
+          <select id="l5"><option value="">Gated (default)</option><option value="always">Always</option><option value="off">Off (fast)</option></select></div>
+      </div>
+      <label class="row" style="margin-top:10px; gap:6px"><input type="checkbox" id="session" style="width:auto; flex:0" /> <span>Track this as one session (mosaic risk)</span></label>
+      <div class="row" style="margin-top:12px"><button class="primary" id="scanBtn">Scan on device</button></div>
+      <div class="samples" id="samples"></div>
+    </div>
+  </section>
+
+  <section class="stack" id="results"><div class="panel empty">Results appear here. Everything is analysed on this device: Ollama + Qwen, Presidio, GLiNER, rules.</div></section>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const COLORS = { SAFE: 'safe', LOW: 'low', MEDIUM: 'medium', HIGH: 'high', CRITICAL: 'critical', REVIEW: 'review' };
+const badge = (l) => `<span class="badge" style="color:var(--${COLORS[l] || 'ink3'});border-color:color-mix(in oklab,var(--${COLORS[l] || 'ink3'}) 45%,transparent);background:color-mix(in oklab,var(--${COLORS[l] || 'ink3'}) 10%,transparent)">${esc(l)}</span>`;
+const statusTag = (s) => {
+  const c = { FLAGGED: 'critical', CLEAR: 'safe', SKIPPED: 'ink3', UNAVAILABLE: 'medium' }[s] || 'ink3';
+  return `<span class="status" style="color:var(--${c});background:color-mix(in oklab,var(--${c}) 12%,transparent)">${esc(s)}</span>`;
+};
+const chips = (t) => esc(t).replace(/⟦[^⟧]*⟧/g, (m) => `<span class="ph-chip">${m}</span>`);
+const sessionId = 'sess-' + Math.random().toString(36).slice(2, 10);
+let last = null;
+
+const SAMPLES = {
+  'Secrets in code': ['Why does this connection fail?', 'import psycopg2\nAWS_ACCESS_KEY_ID = "AKIAQ7X3VEILDEMO4K2P"\nDB_PASSWORD = "Tr0ub4dor&Falcon!"\nconn = psycopg2.connect(host="pg-billing-01.corp.internal", port=5432, connect_timeout=3)\n# OperationalError: could not connect to server: Connection timed out'],
+  'Board acquisition': ['Summarise this update in two bullet points for my manager.', 'The board has approved negotiations with Acme Corp, expected to close in Q4 at a valuation near ₹420 Cr.'],
+  'HR email': ['Help me write this HR email.', "Draft an email telling Rahul Mehta his salary goes to ₹18.5 LPA. Mention that Rahul's performance review was the reason."],
+  'Customer table': ['Calculate the average customer spending.', 'name,email,phone,city,total_spend\nAarav Sharma,aarav.sharma@example.com,9876543210,Pune,12400\nDiya Patel,diya.patel@example.com,9123456780,Ahmedabad,8650\nKabir Rao,kabir.rao@example.com,9988776655,Bengaluru,15320\nAnanya Iyer,ananya.iyer@example.com,9090909090,Chennai,6780'],
+  'Evasion': ['Why does the deploy script reject this key?', 'PAYMENTS_KEY = s k _ l i v e _ 4 e C 3 9 H q L y j W D a r j t T 1 z d p 7 d c\ndb_pass_b64: VmVpbERlbW8hUGFzc3cwcmQ='],
+  'Safe question': ['Explain the difference between TCP and UDP.', ''],
+};
+$('#samples').innerHTML = Object.keys(SAMPLES).map((k) => `<button data-k="${esc(k)}">${esc(k)}</button>`).join('');
+$('#samples').addEventListener('click', (e) => {
+  const k = e.target.dataset.k; if (!k) return;
+  [$('#instruction').value, $('#content').value] = SAMPLES[k];
+});
+
+async function api(path, body) {
+  const r = await fetch(path, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {});
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r.json();
+}
+
+async function health() {
+  try {
+    const h = await api('/api/health');
+    $('#health').innerHTML = [
+      `<span class="chip ${h.llm.model_installed ? 'ok' : 'bad'}">L5 ${esc(h.llm.model)} ${h.llm.model_installed ? 'ready' : 'missing'}</span>`,
+      `<span class="chip ${h.l2.available ? 'ok' : 'bad'}">L2 NER ${h.l2.loaded ? 'loaded' : h.l2.available ? 'loading…' : 'off'}</span>`,
+      `<span class="chip">Org DNA ${h.org_dna.documents} docs · ${h.org_dna.codenames} codenames</span>`,
+      `<span class="chip">${h.honeytokens} honeytokens</span>`,
+      `<span class="chip ok">network: local only</span>`,
+    ].join('');
+    if (h.l2.available && !h.l2.loaded) setTimeout(health, 3000);
+  } catch { $('#health').innerHTML = '<span class="chip bad">engine offline</span>'; }
+}
+health();
+
+$('#scanBtn').addEventListener('click', async () => {
+  const instruction = $('#instruction').value, content = $('#content').value;
+  if (!instruction.trim() && !content.trim()) return;
+  $('#scanBtn').disabled = true;
+  $('#results').innerHTML = `<div class="panel empty"><span class="spinner"></span> Scanning on this device… the Qwen layer takes a few seconds per page on CPU.</div>`;
+  try {
+    last = await api('/api/scan', { instruction, content, destination: $('#dest').value, l5_mode: $('#l5').value || null, session_id: $('#session').checked ? sessionId : null });
+    render(last);
+  } catch (e) {
+    $('#results').innerHTML = `<div class="panel empty" style="color:var(--critical)">${esc(e.message)}</div>`;
+  } finally { $('#scanBtn').disabled = false; }
+});
+
+function render(r) {
+  const k = r.risk, rec = r.recommendation;
+  const flagged = r.findings.filter((f) => f.flags);
+  const recorded = r.findings.filter((f) => !f.flags);
+  const v = r.verification;
+  $('#results').innerHTML = `
+  <div class="panel"><div class="pb row" style="justify-content:space-between">
+    <div style="flex:0 0 auto">${badge(k.level)}</div>
+    <div><div class="kicker">score · confidence</div><div class="mono">${k.score} · ${Math.round(k.confidence * 100)}%</div></div>
+    <div><div class="kicker">task</div><div>${esc(r.task.label)}</div></div>
+    <div><div class="kicker">measured on this device</div><div class="mono">${(r.total_ms / 1000).toFixed(2)} s</div></div>
+    <div style="flex:2"><div class="kicker">recommended</div><div><b>${esc(rec.default.replace('_', ' ').toLowerCase())}</b> · <span class="muted">${esc(rec.why)}</span></div></div>
+  </div>
+  ${k.combination_bonus ? `<div class="pb muted" style="border-top:1px solid var(--line)">${esc(k.combination_bonus)}</div>` : ''}
+  ${r.session && r.session.warning ? `<div class="pb" style="border-top:1px solid var(--line);color:var(--high)"><b>Mosaic risk:</b> ${esc(r.session.warning)}</div>` : ''}
+  ${r.normalisation.length ? `<div class="pb" style="border-top:1px solid var(--line)"><span class="kicker">Evasion decoded</span>${r.normalisation.map((n) => `<div class="mono">${esc(n.method)}: <span class="muted">${esc(n.before.slice(0, 60))}</span> → <b>${esc(n.after.slice(0, 60))}</b></div>`).join('')}</div>` : ''}
+  </div>
+
+  <div class="panel"><div class="ph"><span class="kicker">Detection ensemble · real layers</span><span class="muted mono">fusion: ${esc(r.fusion.verdict)}</span></div>
+    <div class="scroll"><table><tr><th>Layer</th><th>Status</th><th>Hits</th><th>ms</th><th>Note</th></tr>
+    ${r.layers.map((l) => `<tr><td><b class="mono">${l.layer}</b> ${esc(l.name)}</td><td>${statusTag(l.status)}</td><td class="mono">${l.findings}</td><td class="mono">${l.ms}</td><td class="muted">${esc(l.note)}</td></tr>`).join('')}
+    </table></div></div>
+
+  ${flagged.length ? `<div class="panel"><div class="ph"><span class="kicker">Findings</span><span class="muted">${flagged.length} flagged${recorded.length ? ` · ${recorded.length} names recorded` : ''}</span></div>
+    <div class="scroll"><table><tr><th>Layer</th><th>Category</th><th>Type</th><th>Signal</th><th>Evidence</th><th>Conf.</th></tr>
+    ${flagged.map((f) => `<tr><td class="mono">${f.layer}</td><td class="mono">${esc(f.category)}</td><td class="mono">${esc(f.entity_type)}</td><td>${f.strong ? 'strong' : 'weak'}</td><td class="mono">${esc(['SECRET', 'HONEYTOKEN', 'CARD'].includes(f.entity_type) ? f.text.slice(0, 4) + '…' : (f.text || f.detail)).slice(0, 90)}</td><td class="mono">${Math.round(f.confidence * 100)}%</td></tr>`).join('')}
+    </table></div></div>` : ''}
+
+  ${r.explanation.length ? `<div class="panel"><div class="ph"><span class="kicker">Exposure explainer</span></div><div class="pb grid2">
+    ${r.explanation.map((e) => `<div class="card"><div class="row" style="justify-content:space-between"><b class="mono" style="font-size:11.5px">${esc(e.category)}</b>${badge(e.severity)}</div>
+      <div><span class="muted">Found:</span> ${esc(e.found)}</div><div><span class="muted">Where:</span> ${esc(e.where)}</div>
+      <div class="mono"><span class="muted" style="font-family:var(--sans)">Evidence:</span> ${esc(e.evidence)}</div>
+      <div><span class="muted">Why it matters:</span> ${esc(e.why_it_matters)}</div><div><span class="muted">Regulation:</span> ${esc(e.regulation)}</div></div>`).join('')}
+  </div></div>` : ''}
+
+  ${r.blocked ? `<div class="panel pb" style="border:2px solid var(--critical)"><b style="color:var(--critical)">Request blocked: honeytoken tripwire.</b> ${esc(k.honeytoken_source || '')}. Nothing is sent and override is not available.</div>` : `
+  <div class="panel"><div class="ph"><span class="kicker">Minimise → mask → verify</span><span class="mono">${v ? 'verification ' + esc(v.status) : 'unchanged'}</span></div><div class="pb stack">
+    ${r.table ? `<div><b>Table minimised:</b> kept <span class="mono">${esc(r.table.kept_columns.join(', '))}</span>; dropped <span class="mono">${esc(r.table.dropped_columns.join(', '))}</span> <span class="muted">(${esc(r.table.reason)})</span></div>` : ''}
+    ${r.minimisation.length ? `<div class="scroll"><table><tr><th>Class</th><th>Action</th><th>Count</th><th>Why</th></tr>${r.minimisation.map((m) => `<tr><td>${esc(m.item)}</td><td class="mono">${esc(m.action)}</td><td class="mono">${m.count}</td><td class="muted">${esc(m.reason)}</td></tr>`).join('')}</table></div>` : ''}
+    ${v ? `<div>${v.attempts.map((a, i) => `<div class="card" style="margin-bottom:6px"><div class="kicker">Attempt ${i + 1} · ${a.passed ? 'PASS' : 'FAIL'}</div>${a.checks.map((c) => `<div>${c.passed ? '✓' : '✗'} ${esc(c.label)} <span class="muted">${esc(c.detail)}</span></div>`).join('')}</div>`).join('')}
+      ${v.repairs.map((x) => `<div style="color:var(--medium)">Repair: ${esc(x.note)}</div>`).join('')}</div>` : ''}
+    <div><div class="row" style="justify-content:space-between"><span class="kicker">Outbound: all the external AI receives</span><button id="copyBtn" style="flex:0 0 auto">Copy</button></div><div class="pre" style="margin-top:6px">${chips(r.outbound)}</div></div>
+    ${r.vault.length ? `<div><span class="kicker">Vault · stays on this device</span><div class="scroll"><table>${r.vault.map((x) => `<tr><td><span class="ph-chip">${esc(x.placeholder)}</span></td><td class="mono">${x.secret ? '<span style="color:var(--critical)">secret: never restored</span>' : esc(x.original)}</td><td class="muted mono">${esc(x.entity_type)}</td></tr>`).join('')}</table></div></div>` : ''}
+    <div class="row"><button id="localBtn">Answer locally with Qwen</button></div>
+    <div id="localOut"></div>
+    ${r.vault.length ? `<div><label for="reply" class="kicker">Paste the external AI's reply to restore it on this device</label><textarea id="reply" style="min-height:110px" placeholder="Reply containing ⟦…⟧ placeholders"></textarea>
+      <div class="row" style="margin-top:8px"><button id="rehydrateBtn" style="flex:0 0 auto">Restore</button></div><div id="restored"></div></div>` : ''}
+  </div></div>`}
+
+  <div class="panel"><div class="ph"><span class="kicker">Pipeline steps · measured</span></div><div class="pb mono">${r.steps.map((s) => `<div>${esc(s.step)} <span class="muted">${s.ms} ms</span></div>`).join('')}</div></div>`;
+
+  const copy = $('#copyBtn'); if (copy) copy.onclick = () => navigator.clipboard.writeText(r.outbound).then(() => (copy.textContent = 'Copied'));
+  const lb = $('#localBtn');
+  if (lb) lb.onclick = async () => {
+    lb.disabled = true; $('#localOut').innerHTML = '<span class="spinner"></span> Qwen is answering on this device…';
+    try { const a = await api('/api/answer-local', { scan_id: r.scan_id });
+      $('#localOut').innerHTML = a.error ? `<span style="color:var(--critical)">${esc(a.error)}</span>` : `<div class="card"><div class="kicker" style="color:var(--safe)">Answered by on-device Qwen · nothing left this device · ${a.seconds.toFixed(1)} s</div><div style="white-space:pre-wrap">${esc(a.answer)}</div></div>`;
+    } catch (e) { $('#localOut').textContent = e.message; } finally { lb.disabled = false; }
+  };
+  const rb = $('#rehydrateBtn');
+  if (rb) rb.onclick = async () => {
+    const out = await api('/api/rehydrate', { scan_id: r.scan_id, reply: $('#reply').value });
+    $('#restored').innerHTML = `<div class="pre" style="margin-top:8px">${out.segments.map((s) => s.kind === 'text' ? esc(s.text) : s.kind === 'restored' ? `<span class="restored">${esc(s.value)}</span>` : `<span class="ph-chip">${esc(s.placeholder || s.raw)}</span>`).join('')}</div>
+      <div class="muted mono">${out.restored} restored · ${out.secrets_kept} secrets kept masked · ${out.unresolved.length} unresolved</div>`;
+  };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "documents": 192,
+  "sensitive": 147,
+  "safe": 45,
+  "recall_protected": 93.2,
+  "recall_hard_flag": 83.7,
+  "fnr": 6.8,
+  "precision_hard_flag": 99.2,
+  "fpr_hard_flag": 2.2,
+  "safe_sent_to_review": 20.0,
+  "review_rate_all": 12.0,
+  "hard_case_recall_protected": 91.9,
+  "missed": [
+    "DOC_004",
+    "DOC_018",
+    "DOC_038",
+    "DOC_062",
+    "DOC_083",
+    "DOC_113",
+    "DOC_130",
+    "DOC_165",
+    "DOC_178",
+    "DOC_185"
+  ],
+  "false_flags": [
+    "DOC_096"
+  ],
+  "by_group": {
+    "CONFIDENTIAL_BUSINESS": 100.0,
+    "CUSTOMER_INFORMATION": 100.0,
+    "FINANCIAL": 100.0,
+    "INTELLECTUAL_PROPERTY": 100.0,
+    "MIXED_SENSITIVE": 95.0,
+    "PERSONAL_INFORMATION": 75.0,
+    "SECURITY": 84.0
+  },
+  "seconds_per_doc_avg": 12.3,
+  "seconds_per_doc_max": 195.53,
+  "l5_error_docs": 0,
+  "long_documents": [
+    {
+      "pages": 1,
+      "verdict": "SENSITIVE",
+      "needle_caught": true,
+      "seconds": 17.3
+    },
+    {
+      "pages": 5,
+      "verdict": "SENSITIVE",
+      "needle_caught": true,
+      "seconds": 295.3
+    },
+    {
+      "pages": 10,
+      "verdict": "SENSITIVE",
+      "needle_caught": true,
+      "seconds": 417.4
+    },
+    {
+      "pages": 15,
+      "verdict": "SENSITIVE",
+      "needle_caught": true,
+      "seconds": 554.5
+    }
+  ]
+}
