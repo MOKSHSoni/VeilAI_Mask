@@ -4,7 +4,7 @@ The **real, working** version of the VeilAI prototype: a local AI privacy firewa
 
 **What "model" means here.** `veilai_mask` is a custom **Ollama model** created from Qwen3 4B Instruct (`./Modelfile`): the same weights packaged with VeilAI_Mask's instructions and deterministic settings. No new weights were trained; that would need a GPU and labelled training data. The protection comes from the whole engine: six detection layers, fusion, minimisation, masking and verification, with Qwen as one layer among them.
 
-The [VeilAI prototype](https://github.com/MOKSHSoni/VeilAI) ([live demo](https://veil-ai-blush.vercel.app/), simulated results) is unchanged. VeilAI_Mask ports its deterministic code (rules, masking, verification, rehydration) to Python and replaces every simulated part with real models.
+This is the [VeilAI prototype](https://github.com/MOKSHSoni/VeilAI) ([live demo](https://veil-ai-blush.vercel.app/), simulated results). VeilAI_Mask ports its deterministic code (rules, masking, verification, rehydration) to Python and replaces every simulated part with real models.
 
 ---
 
